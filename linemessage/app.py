@@ -1,10 +1,12 @@
 from flask import Flask, request, abort
 from openai import OpenAI
 import requests
+import os
 
 app = Flask(__name__)
 
 CHANNEL_ACCESS_TOKEN = 'O6C+OGyx9bHcMG5ltfz98NWzmA6zSjOwaL588inT2D0r0/EYBYxfR48dDTjAEDwQq5ZTa1zhHHhDQp5M9Wg1rdYjXFvK1xrJ/7UTwn46HKGXqaf8kKjO+fXBn0s6QC0VC/P/hsnlGFN4J4w0hfJRBwdB04t89/1O/w1cDnyilFU='
+
 
 def reply_message(reply_token, text):
     headers = {
@@ -20,9 +22,11 @@ def reply_message(reply_token, text):
             }
         ]
     }
-    response = requests.post('https://api.line.me/v2/bot/message/reply', headers=headers, json=data)
+    response = requests.post(
+        'https://api.line.me/v2/bot/message/reply', headers=headers, json=data)
     if response.status_code != 200:
         print(f"Error: {response.status_code} {response.text}")
+
 
 @app.route('/callback', methods=['POST'])
 def callback():
@@ -33,21 +37,29 @@ def callback():
     events = body.get('events', [])
     for event in events:
         if event['type'] == 'message' and event['message']['type'] == 'text':
-            client = OpenAI(api_key="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")
+            api_key = os.getenv("OPENAI_API_KEY")
 
-            response = client.responses.create(
-                model="gpt-4.1",
-                input="Write a one-sentence bedtime story about a unicorn."
+            # プロジェクトAPIキーをここに記入
+            client = OpenAI(api_key=api_key)
+
+            response = client.chat.completions.create(
+                model="gpt-4o",  # 利用したいモデル名
+                messages=[
+                    {"role": "system", "content": "あなたは役立つアシスタントです。"},
+                    {"role": "user", "content": "日本の四季について教えてください。"}
+                ]
             )
 
             reply_token = event['replyToken']
-            reply_message(reply_token, response.output_text)
+            reply_message(reply_token, response.choices[0].message.content)
 
     return 'OK', 200
+
 
 @app.route('/')
 def index():
     return 'Flaskアプリは正常に動作しています'
+
 
 if __name__ == '__main__':
     app.run(port=3000)
