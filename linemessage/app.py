@@ -33,7 +33,7 @@ def callback():
     events = body.get('events', [])
     for event in events:
         if event['type'] == 'message' and event['message']['type'] == 'text':
-            client = OpenAI()
+            client = OpenAI(api_key="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")
 
             response = client.responses.create(
                 model="gpt-4.1",
