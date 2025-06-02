@@ -7,3 +7,7 @@ def webhook():
     data = request.json
     # ここで受信データに応じた処理を行い、応答を返す
     return jsonify({'reply': 'メッセージを受け取りました！'})
+
+@app.route('/')
+def index():
+    return 'Flaskアプリは正常に動作しています'
