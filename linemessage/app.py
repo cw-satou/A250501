@@ -5,10 +5,8 @@ import os
 
 app = Flask(__name__)
 
-CHANNEL_ACCESS_TOKEN = 'O6C+OGyx9bHcMG5ltfz98NWzmA6zSjOwaL588inT2D0r0/EYBYxfR48dDTjAEDwQq5ZTa1zhHHhDQp5M9Wg1rdYjXFvK1xrJ/7UTwn46HKGXqaf8kKjO+fXBn0s6QC0VC/P/hsnlGFN4J4w0hfJRBwdB04t89/1O/w1cDnyilFU='
-
-
 def reply_message(reply_token, text):
+    CHANNEL_ACCESS_TOKEN=os.getenv("CHANNEL_ACCESS_TOKEN")
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {CHANNEL_ACCESS_TOKEN}'
