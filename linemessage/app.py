@@ -1,4 +1,5 @@
 from flask import Flask, request, abort
+from openai import OpenAI
 import requests
 
 app = Flask(__name__)
@@ -32,8 +33,15 @@ def callback():
     events = body.get('events', [])
     for event in events:
         if event['type'] == 'message' and event['message']['type'] == 'text':
+            client = OpenAI()
+
+            response = client.responses.create(
+                model="gpt-4.1",
+                input="Write a one-sentence bedtime story about a unicorn."
+            )
+
             reply_token = event['replyToken']
-            reply_message(reply_token, 'お問い合わせありがとうございます。お返事します')
+            reply_message(reply_token, response.output_text)
 
     return 'OK', 200
 
